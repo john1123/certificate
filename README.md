@@ -33,7 +33,8 @@ function generate() {
 }
 ```
 
-Для подключения ком
+Для подключения компонента, автор использовал следующий код:
+```php
 <?
 $APPLICATION->IncludeComponent(
 	"ivan:certificate",
@@ -43,3 +44,4 @@ $APPLICATION->IncludeComponent(
 	)
 );
 ?>
+```
