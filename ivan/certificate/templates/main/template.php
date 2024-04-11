@@ -2,6 +2,7 @@
 
 use \Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\Localization\Loc;
+use \Bitrix\Main\Application;
 
 /** @var array $arParams */
 /** @var array $arResult */
@@ -18,28 +19,32 @@ use Bitrix\Main\Localization\Loc;
 Loc::loadMessages(__FILE__);
 
 $user = CurrentUser::get();
-if ($user->getId()) { ?>
-    <form method="post">
-        <input type="text" id="certificate-current" name="certificate" />
-        <input type="submit" value="<?=Loc::getMessage('IVAN_CERTIFICATES_ACTIVATE') ?>" />
-        <input type="hidden" name="user_id" value="<?=CurrentUser::get()->getId() ?>" />
-        <?=bitrix_sessid_post()?>
-    </form>
-    <div><?=Loc::getMessage('IVAN_CERTIFICATES_AVAILABLE') ?></div>
-    <ul id="certificates-available">
-    <?php
-    if ($arResult["AVAILABLE"]->SelectedRowsCount() != 0) {
-    while ($element = $arResult["AVAILABLE"]->GetNext()) {
-        echo '    <li><a href="javascript:void(' . $element['ID'] . ')">' . $element['NAME'] . "</a></li>\n";
-    }
+if ($user->getId()) {
+    $session = Application::getInstance()->getSession();
+    if (!$session->has('certificate')) { ?>
+        <form method="post">
+            <input type="text" id="certificate-current" name="certificate" />
+            <input type="submit" value="<?=Loc::getMessage('IVAN_CERTIFICATES_ACTIVATE') ?>" />
+            <input type="hidden" name="user_id" value="<?=CurrentUser::get()->getId() ?>" />
+            <?=bitrix_sessid_post()?>
+        </form>
+        <div><?=Loc::getMessage('IVAN_CERTIFICATES_AVAILABLE') ?></div>
+        <ul id="certificates-available">
+        <?php
+        if ($arResult["AVAILABLE"]->SelectedRowsCount() != 0) {
+            while ($element = $arResult["AVAILABLE"]->GetNext()) {
+                echo '    <li><a href="javascript:void(' . $element['ID'] . ')">' . $element['NAME'] . "</a></li>\n";
+            }
+        } else {
+            echo Loc::getMessage('IVAN_CERTIFICATES_LIST_EMPTY');
+        }
+        ?>
+        </ul>
+        <?php
     } else {
-        echo Loc::getMessage('IVAN_CERTIFICATES_LIST_EMPTY');
+        echo Loc::getMessage('IVAN_CERTIFICATES_HAVE_ACTIVE_CERTIFICATE') . ' (' . $session->get('certificate') . ')<br />' . PHP_EOL;
     }
-    ?>
-    </ul>
-    <?php
     echo '[' . $user->getId() . '] ' . $user->getFullName();
-
 } else {
     echo Loc::getMessage('IVAN_CERTIFICATES_ONLY_AUTHORIZED_USERS');
 }
