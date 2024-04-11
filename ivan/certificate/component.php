@@ -15,7 +15,9 @@ if (!is_null($certificate)) {
         ShowError(Loc::getMessage('IVAN_CERTIFICATES_ACCESS_DENIED'));
         return;
     }
-    $session = Application::getInstance()->getSession();
+    // Данные пришёл из формы - пользователь хочет активировать сертификат
+
+    // Поиск сертификата по его имени
     $arFilter = array(
         'IBLOCK_ID' => $IBLOCK_ID,
         'NAME' => $certificate,
@@ -30,16 +32,24 @@ if (!is_null($certificate)) {
         while($ar = $res->Fetch() ) {
             $id = $ar['ID'];
         }
-    if ($res->SelectedRowsCount() > 0) {
-        $dateNow = new DateTime();
-        $dateNow = $dateNow->format('Y-m-d H:i:s');
-        $values = array(
-            'USER' => CurrentUser::get()->getId(),
-            'ACTIVATED' => $dateNow
-        );
-        CIBlockElement::SetPropertyValuesEx($id, false, $values);
-        CIBlock::clearIblockTagCache($IBLOCK_ID);
-        $session->set('certificate', $certificate);
+        if ($res->SelectedRowsCount() > 0) {
+            // Сертификат был найден
+            // Обновляем свойства, сбрасываем кэш и сохраняем сертификат в сессию
+            $dateNow = new DateTime();
+            $dateNow = $dateNow->format('Y-m-d H:i:s');
+            $values = array(
+                'USER' => CurrentUser::get()->getId(),
+                'ACTIVATED' => $dateNow
+            );
+
+            // Место для дополнительного кода.
+            // Можно отправлять письма и т.п.
+
+            CIBlockElement::SetPropertyValuesEx($id, false, $values);
+            CIBlock::clearIblockTagCache($IBLOCK_ID);
+
+            $session = Application::getInstance()->getSession();
+            $session->set('certificate', $certificate);
     } else {
 
         ShowError(Loc::getMessage('IVAN_CERTIFICATES_NOT_FOUND'));
@@ -51,8 +61,8 @@ $arFilter = array(
     'IBLOCK_ID' => $IBLOCK_ID,
     'ACTIVE' => 'Y',
     'PROPERTY_ACTIVATED' => false
-    // USER // Привязка к пользователю
 );
+// Заполняем доступные сертификаты
 $this->arResult["AVAILABLE"] = CIBlockElement::GetList(
     array(),
     $arFilter,

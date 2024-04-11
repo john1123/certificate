@@ -32,10 +32,13 @@ if ($user->getId()) {
         <ul id="certificates-available">
         <?php
         if ($arResult["AVAILABLE"]->SelectedRowsCount() != 0) {
+            // Есть доступные сертификаты
             while ($element = $arResult["AVAILABLE"]->GetNext()) {
+                // ID сертификата мелькает в ссылке для справки - он не нужен
                 echo '    <li><a href="javascript:void(' . $element['ID'] . ')">' . $element['NAME'] . "</a></li>\n";
             }
         } else {
+            // Нет доступных сертификатов - список суст
             echo Loc::getMessage('IVAN_CERTIFICATES_LIST_EMPTY');
         }
         ?>
@@ -44,7 +47,6 @@ if ($user->getId()) {
     } else {
         echo Loc::getMessage('IVAN_CERTIFICATES_HAVE_ACTIVE_CERTIFICATE') . ' (' . $session->get('certificate') . ')<br />' . PHP_EOL;
     }
-    echo '[' . $user->getId() . '] ' . $user->getFullName();
 } else {
     echo Loc::getMessage('IVAN_CERTIFICATES_ONLY_AUTHORIZED_USERS');
 }
