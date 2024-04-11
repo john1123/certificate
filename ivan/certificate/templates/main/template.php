@@ -21,7 +21,7 @@ Loc::loadMessages(__FILE__);
 
 <form method="post">
     <input type="text" id="certificate-current" name="certificate" />
-    <input type="button" value="<?=Loc::getMessage('IVAN_CERTIFICATES_ACTIVATE') ?>" />
+    <input type="submit" value="<?=Loc::getMessage('IVAN_CERTIFICATES_ACTIVATE') ?>" />
     <input type="hidden" name="user_id" value="<?=CurrentUser::get()->getId() ?>" />
     <?=bitrix_sessid_post()?>
 </form>
@@ -30,7 +30,7 @@ Loc::loadMessages(__FILE__);
 <?php
 if ($arResult["AVAILABLE"]->SelectedRowsCount() != 0) {
 while ($element = $arResult["AVAILABLE"]->GetNext()) {
-    echo '    <li><a href="javascript:void(0)">' . $element['NAME'] . "</a></li>\n";
+    echo '    <li><a href="javascript:void(' . $element['ID'] . ')">' . $element['NAME'] . "</a></li>\n";
 }
 } else {
     echo Loc::getMessage('IVAN_CERTIFICATES_LIST_EMPTY');
